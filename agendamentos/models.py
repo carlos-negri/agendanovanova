@@ -31,7 +31,7 @@ class OrdemServicos(models.Model):
     )
     agendamento = models.ForeignKey('agendamentos.Agendamento', verbose_name='Agendamento',on_delete=models.CASCADE,
                                     related_name='agendamento')
-    servico = models.ForeignKey('servicos.Servico', verbose_name='Servico', on_delete=models.PROTECT,
+    servico = models.ForeignKey('servicos.Servico', verbose_name='Servico', on_delete=models.CASCADE,
                                 related_name='ordem_servico')
     funcionario = models.ForeignKey('funcionarios.Funcionario', verbose_name='Funcionário',on_delete=models.PROTECT,
                                     related_name='funcionario')
