@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import TemplateResponseMixin, View
@@ -126,4 +128,29 @@ class AgendamentoExibir(DetailView):
                                 produto.save()
                 agendamento.status = 'F'
                 agendamento.save()
+                self.enviar_email(agendamento)
         return agendamento
+
+    def enviar_email(self, agendamento):
+        email = []
+        email.append(agendamento.cliente.email)
+        descricao = []
+        for servico in agendamento.servicos:
+            descricao.append(f'{servico} - R$ {servico.preco} ({servico.get_situacao_display()})')
+
+        dados = {'cliente': agendamento.cliente.nome,
+                 'horario': agendamento.horario,
+                 'funcionario': agendamento.funcionario.nome,
+                 'descricao': descricao,
+                 'valor': agendamento.valor, }
+
+        texto_email = render_to_string('emails/texto_email.txt', dados)
+        html_email = render_to_string('emails/texto_email.html', dados)
+        send_mail(subject='Lavacar - Serviço concluido',
+                  message = texto_email,
+                  from_email = 'carlos.negri@acad.ufsm.com.br',
+                  recipient_list = email,
+                  html_message = html_email,
+                  fail_silently = False,
+        )
+        return redirect('agendamentos')

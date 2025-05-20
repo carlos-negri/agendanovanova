@@ -23,7 +23,7 @@ class ProdutosServico(models.Model):
     servico = models.ForeignKey('servicos.Servico', verbose_name='Serviço', help_text='Nome do serviço realizado',
                                 on_delete=models.CASCADE, related_name='servico')
     produto = models.ForeignKey('produtos.Produto', verbose_name='Produto', help_text='Nome do produto utilizado',
-                                on_delete=models.CASCADE, related_name='produto')
+                                on_delete=models.PROTECT, related_name='produto')
     quantidade = models.DecimalField('Quantidade', max_digits=5, decimal_places=2,
                                      help_text='Quantidade utilizada de produto', default=0.00)
     class Meta:

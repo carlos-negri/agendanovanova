@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.db.models import ProtectedError
+from django.shortcuts import render, redirect
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -54,3 +55,13 @@ class ProdutoDeleteView(SuccessMessageMixin, DeleteView):
         success_url = reverse_lazy('produtos')
         success_message = "Produto apagado com sucesso!"
 
+        def post (self, request, *args, **kwargs):
+            self.object = self.get_object()
+            success_url = self.get_success_url()
+            try:
+                return super().post(request, *args, **kwargs)
+            except ProtectedError:
+                messages.error(request, f'O produto {self.object} não pode ser excluído. ' 
+                                        f'Esse produto é utilizado em serviços')
+            finally:
+                return redirect(success_url)
