@@ -74,12 +74,15 @@
                                                     <i class="far fa-trash-alt"></i>
                                                 </span>
                                             {% endif %}
-                                            <a href="{% url 'agendamento_exibir' agendamento.pk %}">
-                                                <span class="icon">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </span>
-                                            </a>
+                                            {% if perms.agendamentos.fechar_agendamento %}
 
+                                                <a href="{% url 'agendamento_exibir' agendamento.pk %}">
+                                                    <span class="icon">
+                                                        <i class="far fa-check-circle"></i>
+                                                    </span>
+                                                </a>
+
+                                            {% endif %}
                                         </td>
                                     </tr>
                             {% endfor %}

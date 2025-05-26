@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-from django.conf.global_settings import STATICFILES_DIRS, EMAIL_BACKEND
+from django.conf.global_settings import STATICFILES_DIRS, EMAIL_BACKEND, LOGOUT_REDIRECT_URL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,3 +142,6 @@ EMAIL_HOST_USER = 'carlos.negri@acad.ufsm.br'
 EMAIL_HOST_PASSWORD = 'wcdgfmwrhuclmslk'
 DEFAULT_FROM_EMAIL = 'lavacar'
 
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q, ProtectedError
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -12,7 +13,9 @@ from .forms import ServicoModelForm, ProdutosServicoInLine
 from .models import Servico
 
 
-class ServicosView(ListView):
+class ServicosView(PermissionRequiredMixin, ListView):
+    permission_required = 'servicos.view_servico'
+    permission_denied_message = 'Visualizar serviço'
     model = Servico
     template_name = 'servicos.html'
 
@@ -33,25 +36,29 @@ class ServicosView(ListView):
             return messages.info(self.request, 'Não existem serviços cadastrados!')
 
 
+class ServicoAddView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    permission_required = 'servico.add_servico'
+    permission_denied_message = 'Cadastrar serviço'
+    model = Servico
+    form_class = ServicoModelForm
+    template_name = 'servico_form.html'
+    success_url = reverse_lazy('servicos')
+    success_message = "Serviço cadastrado com sucesso!"
 
 
-class ServicoAddView(SuccessMessageMixin, CreateView):
-        model = Servico
-        form_class = ServicoModelForm
-        template_name = 'servico_form.html'
-        success_url = reverse_lazy('servicos')
-        success_message = "Serviço cadastrado com sucesso!"
+class ServicoUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = 'servico.update_servico'
+    permission_denied_message = 'Editar servico'
+    model = Servico
+    form_class = ServicoModelForm
+    template_name = 'servico_form.html'
+    success_url = reverse_lazy('servicos')
+    success_message = "Serviço alterado com sucesso!"
 
 
-class ServicoUpdateView(SuccessMessageMixin, UpdateView):
-        model = Servico
-        form_class = ServicoModelForm
-        template_name = 'servico_form.html'
-        success_url = reverse_lazy('servicos')
-        success_message = "Serviço alterado com sucesso!"
-
-
-class ServicoDeleteView(SuccessMessageMixin, DeleteView):
+class ServicoDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
+        permission_required = 'servicos.delete_servico'
+        permission_denied_message = 'Excluir serviço'
         model = Servico
         template_name = 'servico_apagar.html'
         success_url = reverse_lazy('servicos')
@@ -67,6 +74,7 @@ class ServicoDeleteView(SuccessMessageMixin, DeleteView):
                                         f'Esse serviço está registrado em ordens de serviço')
             finally:
                 return redirect(success_url)
+
 
 class ServicoInLineEditView(TemplateResponseMixin, View):
     template_name = 'servico_form_inline.html'

@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.db.models import ProtectedError
@@ -9,7 +10,9 @@ from .forms import FornecedorModelForm
 from .models import Fornecedor
 
 
-class FornecedoresView(ListView):
+class FornecedoresView(LoginRequiredMixin, ListView):
+    permission_required = 'fornecedores.view_fornecedor'
+    permission_denied_message = 'Visualizar fornecedor'
     model = Fornecedor
     template_name = 'fornecedores.html'
 
@@ -32,7 +35,9 @@ class FornecedoresView(ListView):
 
 
 
-class FornecedorAddView(SuccessMessageMixin, CreateView):
+class FornecedorAddView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+        permission_required = 'fornecedores.add_fornecedor'
+        permission_denied_message = 'Cadastrar fornecedor'
         model = Fornecedor
         form_class = FornecedorModelForm
         template_name = 'fornecedor_form.html'
@@ -40,15 +45,19 @@ class FornecedorAddView(SuccessMessageMixin, CreateView):
         success_message = "Fornecedor cadastrado com sucesso!"
 
 
-class FornecedorUpdateView(SuccessMessageMixin, UpdateView):
-        model = Fornecedor
-        form_class = FornecedorModelForm
-        template_name = 'fornecedor_form.html'
-        success_url = reverse_lazy('fornecedores')
-        success_message = "Fornecedor alterado com sucesso!"
+class FornecedorUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = 'fornecedores.update_fornecedor'
+    permission_denied_message = 'Editar fornecedor'
+    model = Fornecedor
+    form_class = FornecedorModelForm
+    template_name = 'fornecedor_form.html'
+    success_url = reverse_lazy('fornecedores')
+    success_message = "Fornecedor alterado com sucesso!"
 
 
-class FornecedorDeleteView(SuccessMessageMixin, DeleteView):
+class FornecedorDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+        permission_required = 'fornecedores.delete_fornecedor'
+        permission_denied_message = 'Excluir fornecedor'
         model = Fornecedor
         template_name = 'fornecedor_apagar.html'
         success_url = reverse_lazy('fornecedores')
